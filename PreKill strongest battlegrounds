@@ -1,13 +1,8 @@
-from pyobfuscate import Obfuscator
-
-# Original script to be obfuscated
-script = """-- Create a ScreenGui in CoreGui for persistence after respawn
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "PreKill"
 screenGui.ResetOnSpawn = false
 screenGui.Parent = game:GetService("CoreGui")
 
--- Main Background Frame for the GUI
 local backgroundFrame = Instance.new("Frame")
 backgroundFrame.Size = UDim2.new(0, 400, 0, 500)
 backgroundFrame.Position = UDim2.new(0.5, -200, 0.5, -250)
@@ -16,19 +11,16 @@ backgroundFrame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
 backgroundFrame.BorderSizePixel = 0
 backgroundFrame.Parent = screenGui
 
--- Add UICorner for smooth edges
 local corner = Instance.new("UICorner")
 corner.CornerRadius = UDim.new(0, 10)
 corner.Parent = backgroundFrame
 
--- Header Frame for the title
 local headerFrame = Instance.new("Frame")
 headerFrame.Size = UDim2.new(1, 0, 0, 50)
 headerFrame.BackgroundColor3 = Color3.new(0, 0, 0)
 headerFrame.BorderSizePixel = 0
 headerFrame.Parent = backgroundFrame
 
--- Header Label for "PreKill"
 local headerLabel = Instance.new("TextLabel")
 headerLabel.Size = UDim2.new(0.7, 0, 1, 0)
 headerLabel.BackgroundTransparency = 1
@@ -37,7 +29,6 @@ headerLabel.TextColor3 = Color3.new(1, 1, 1)
 headerLabel.TextScaled = true
 headerLabel.Parent = headerFrame
 
--- Close Button (X)
 local closeButton = Instance.new("TextButton")
 closeButton.Size = UDim2.new(0.1, 0, 1, 0)
 closeButton.Position = UDim2.new(0.9, 0, 0, 0)
@@ -47,7 +38,6 @@ closeButton.TextColor3 = Color3.new(1, 1, 1)
 closeButton.TextScaled = true
 closeButton.Parent = headerFrame
 
--- Minimize Button
 local minimizeButton = Instance.new("TextButton")
 minimizeButton.Size = UDim2.new(0.1, 0, 1, 0)
 minimizeButton.Position = UDim2.new(0.8, 0, 0, 0)
@@ -57,7 +47,6 @@ minimizeButton.TextColor3 = Color3.new(1, 1, 1)
 minimizeButton.TextScaled = true
 minimizeButton.Parent = headerFrame
 
--- Auto Farming Button
 local autoFarmButton = Instance.new("TextButton")
 autoFarmButton.Size = UDim2.new(1, 0, 0, 50)
 autoFarmButton.Position = UDim2.new(0, 0, 0, 50)
@@ -67,39 +56,34 @@ autoFarmButton.TextColor3 = Color3.new(1, 1, 1)
 autoFarmButton.TextScaled = true
 autoFarmButton.Parent = backgroundFrame
 
--- Teleport List Frame
 local teleportListFrame = Instance.new("ScrollingFrame")
-teleportListFrame.Size = UDim2.new(1, 0, 0, 400) -- Adjusted to show more players
+teleportListFrame.Size = UDim2.new(1, 0, 0, 400)
 teleportListFrame.Position = UDim2.new(0, 0, 0, 50)
 teleportListFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
 teleportListFrame.BackgroundTransparency = 1
 teleportListFrame.BorderSizePixel = 0
 teleportListFrame.Parent = backgroundFrame
 
--- Add UICorner to Teleport List Frame
 local cornerTeleport = Instance.new("UICorner")
 cornerTeleport.CornerRadius = UDim.new(0, 10)
 cornerTeleport.Parent = teleportListFrame
 
--- Close Button Functionality
 closeButton.MouseButton1Click:Connect(function()
     screenGui.Enabled = false
 end)
 
--- Minimize Button Functionality
 local minimized = false
 minimizeButton.MouseButton1Click:Connect(function()
     minimized = not minimized
     if minimized then
-        backgroundFrame.Size = UDim2.new(0, 400, 0, 50) -- Set size to show only the header
-        teleportListFrame.Visible = false -- Hide the teleport list frame
+        backgroundFrame.Size = UDim2.new(0, 400, 0, 50)
+        teleportListFrame.Visible = false
     else
-        backgroundFrame.Size = UDim2.new(0, 400, 0, 500) -- Restore the full size
-        teleportListFrame.Visible = true -- Show the teleport list frame again
+        backgroundFrame.Size = UDim2.new(0, 400, 0, 500)
+        teleportListFrame.Visible = true
     end
 end)
 
--- Draggable Functionality for the main GUI
 local dragging = false
 local dragStart = nil
 local startPos = nil
@@ -125,17 +109,14 @@ headerFrame.InputEnded:Connect(function(input)
     end
 end)
 
--- Function to continuously teleport to a player until they are dead or canceled
 local teleporting = false
 local currentTeleportingPlayer = nil
 
--- Function to continuously teleport to a player until they are dead or canceled
 local function startTeleportingToPlayer(player)
     local localPlayer = game.Players.LocalPlayer
     local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
 
     if character and player.Character then
-        -- Check if the player is alive
         local function isPlayerAlive(p)
             return p.Character and p.Character:FindFirstChild("Humanoid") and p.Character.Humanoid.Health > 0
         end
@@ -143,30 +124,24 @@ local function startTeleportingToPlayer(player)
         teleporting = true
         currentTeleportingPlayer = player
 
-        -- Teleport to the player
         while teleporting and isPlayerAlive(player) do
-            -- Adjust distance to teleport closer
-            local targetDistance = 10 -- Set this to the desired distance
+            local targetDistance = 10
             local targetPosition = player.Character.PrimaryPart.Position - player.Character.PrimaryPart.CFrame.LookVector * targetDistance
             character:SetPrimaryPartCFrame(CFrame.new(targetPosition, player.Character.PrimaryPart.Position))
-
-            -- Wait briefly before the next teleport to control the speed
-            wait(0) -- Adjust this value for teleport speed
+            wait(0)
         end
 
-        teleporting = false -- Reset flag when done
+        teleporting = false
     else
         warn("Character or target player's character not found!")
     end
 end
 
--- Function to stop teleportation
 local function stopTeleportation()
     teleporting = false
     currentTeleportingPlayer = nil
 end
 
--- Update Teleport List
 local function updateTeleportList()
     teleportListFrame:ClearAllChildren()
     local players = game.Players:GetPlayers()
@@ -182,32 +157,22 @@ local function updateTeleportList()
         playerLabel.TextScaled = true
         playerLabel.Parent = teleportListFrame
 
-        -- Start teleporting to the player when clicked
         playerLabel.MouseButton1Click:Connect(function()
             if teleporting and currentTeleportingPlayer == player then
-                stopTeleportation() -- Stop teleporting if already teleporting to this player
+                stopTeleportation()
             else
-                startTeleportingToPlayer(player) -- Call the function to start teleporting
+                startTeleportingToPlayer(player)
             end
         end)
     end
 end
 
--- Event connections to handle player additions/removals
 game.Players.PlayerAdded:Connect(updateTeleportList)
 game.Players.PlayerRemoving:Connect(updateTeleportList)
 
--- Initial update to populate teleport list
 updateTeleportList()
 
--- Change the Auto Farming button functionality to show the teleport frame
 autoFarmButton.MouseButton1Click:Connect(function()
-    backgroundFrame.Visible = true -- Ensure the main GUI is visible
-    teleportListFrame.Visible = true -- Show the teleport list frame
-end)"""
-
-# Obfuscate the script
-obfuscated_script = Obfuscator.obfuscate(script)
-
-# Output the obfuscated script
-obfuscated_script
+    backgroundFrame.Visible = true
+    teleportListFrame.Visible = true
+end)
